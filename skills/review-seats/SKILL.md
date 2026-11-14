@@ -53,7 +53,8 @@ the ledger. BASE is `git rev-parse HEAD`. Each task runs in this order:
 4. Fix rounds run, with at most two seat rounds in total. On a branch's last task, the overseer's whole-branch
    review (section 5) runs next, and any fix it needs joins this task's change.
 5. The user gets a short summary of the change and one command block. The summary lists every documented limit
-   and any skipped security seat, each with its reason.
+   and any skipped security seat, each with its reason. It also names each script the gate marked "side effects
+   not checked" and each audit-hook exception the user approved.
 6. The user runs the block and says "done".
 7. The next task starts from that commit.
 
@@ -69,21 +70,19 @@ first commit has no BASE, so its seats read the files directly.
 
 The command block is PowerShell and holds these steps in order:
 
-1. `git switch -c feature/<2-3 words>`, on a branch's first task only.
-2. `git add` with each file named. Never `git add .`.
-3. `git diff --cached --stat`, with the expected file count stated beside it.
-4. `git commit -m '<short subject>'`. The message never mentions AI or the agent.
-5. On a branch's last task, `git push -u origin <branch>` and `gh pr create` with a body that says what changed
+1. `git add` with each file named. Never `git add .`.
+2. `git diff --cached --stat`, with the expected file count stated beside it.
+3. `git commit -m '<short subject>'`. The message never mentions AI or the agent.
+4. On a branch's last task, `git push -u origin <branch>` and `gh pr create` with a body that says what changed
    and how it was verified.
 
 Commit and PR text goes in single-quoted PowerShell strings. That text never contains a quote mark of either kind, a
 backslash, `$` or a backtick, because Windows PowerShell 5.1 splits a native command's argument at an inner double
 quote.
 
-A first task on a new branch looks like this:
+A task's block on the branch `feature/csv-export` looks like this:
 
 ```powershell
-git switch -c feature/csv-export
 git add src/export.py tests/test_export.py
 git diff --cached --stat   # expect 2 files changed
 git commit -m 'Add CSV export for the report table'
@@ -104,8 +103,9 @@ creates the workspace folder by hand.
 
 ## 3. Branches
 
-- Before a branch's first task, the agent checks the current branch. When the user is off main, the agent gives
-  them `git switch main` and `git pull`, then waits for "done" before it records BASE.
+- Before a branch's first task, the agent gives the user a block with `git switch main`, `git pull` and
+  `git switch -c feature/<2-3 words>`. It waits for "done" before it records BASE. All the work then happens
+  uncommitted on that local branch. After a new repo's first commit, no work happens on main.
 - One feature per branch, with about 400 changed lines at most. Generated files, fixtures and lock files don't
   count toward that size.
 - Name the branch `feature/<2-3 words>` when there is no ticket. When a ticket exists, use its key form, such as
@@ -141,6 +141,10 @@ applies. Each seat writes its own report into the workspace (section 8).
    - file writes
    - what ships
    - public docs
+   - dependencies or lock files
+   - CI workflows
+   - git hooks
+   - permissions or settings
 
    When none of these applies, the ledger records why the security seat was skipped.
 
@@ -160,10 +164,10 @@ Each seat gets a brief handed over as file paths and never as pasted text. The a
 into the workspace, keeps the mode that applies and fills in the paths.
 - The overseer uses [references/overseer.md](references/overseer.md).
 - The code-quality seat uses [references/code-quality.md](references/code-quality.md).
+- The security seat uses [references/security.md](references/security.md).
 
-Both templates point to [references/brief-contract.md](references/brief-contract.md). It holds the ground rules,
-the finding classes and the verdict format. The security seat gets a brief in the same shape that points to the
-same contract.
+All three templates point to [references/brief-contract.md](references/brief-contract.md). It holds the ground
+rules, the finding classes and the verdict format.
 
 ## 7. Cost gates
 
@@ -175,8 +179,16 @@ security vulnerability counts as a leak. Every other finding becomes a documente
 
 **The local gate.** Before any seat round, the agent runs every self-test, mutation and regression check the
 project has, on each target runtime. It also reruns every earlier probe set and compares the result with the
-previous version. That comparison lists anything the new version now misses. Seats start only when the gate is
-clean.
+previous version. That comparison lists anything the new version now misses. When the security seat runs, the
+gate also lists what would ship with `git ls-files` plus `git ls-files --others --exclude-standard`. It runs each
+new or changed script that runs on the user's machine once, in place, under an audit hook. The hook allows writes
+only inside the project's gitignored scratch folder, or a `scratch/` folder inside the workspace when the project
+names none, and it checks each path after resolving it to its real path. It blocks every other write, every
+subprocess and every network call, unless the task brief names an exception the user approved. A script the hook
+can't watch, such as a non-Python script or one that needs arguments, doesn't run, and the gate marks it "side
+effects not checked". The gate saves these outputs in the workspace, outside `scratch/`, as the security template
+describes. Before the seats start, the agent also saves the drafted commit message there, plus
+the PR body on a branch's last task. Seats start only when the gate is clean.
 
 **Evals.** Evals rerun only when the skill's behaviour text or a fixture changes. One final pass runs on the
 release candidate. Both run on the session's own model.
