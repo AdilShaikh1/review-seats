@@ -1,0 +1,6 @@
+/INTERNAL/
+.superpowers/
+__pycache__/
+*.pyc
+# claude plugin eval writes its reports here
+skills/review-seats/evals/results/

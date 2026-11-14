@@ -1,0 +1,17 @@
+{
+  "name": "review-seats",
+  "owner": {
+    "name": "Adil Shaikh",
+    "url": "https://github.com/AdilShaikh1"
+  },
+  "description": "The review-seats skill as an installable Claude Code plugin.",
+  "plugins": [
+    {
+      "name": "review-seats",
+      "source": "./",
+      "description": "Up to three review seats per task, a git hand-off to the user and cost gates for subagent-driven-development.",
+      "category": "productivity",
+      "keywords": ["review", "subagents", "code-review"]
+    }
+  ]
+}

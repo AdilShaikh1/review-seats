@@ -1,0 +1,3 @@
+interface:
+  display_name: "Review Seats"
+  short_description: "Three review seats and cost gates for subagent work"
