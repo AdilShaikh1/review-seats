@@ -8,7 +8,7 @@
 
 ## What it does
 
-The skill changes how `superpowers:subagent-driven-development` runs, so it needs the superpowers plugin installed. Every task gets an overseer for logic and correctness and a code-quality seat. A security seat joins when the task touches untrusted input, secrets, network calls, file writes, what ships or public docs. The agent never runs a git write. Each task ends with a summary and a PowerShell command block for the user to run. A two-round stop rule, a local gate before any seat round and a cap of 4 agents at once keep each task's review cost bounded.
+The skill changes how `superpowers:subagent-driven-development` runs, so it needs the superpowers plugin installed. Every task gets an overseer for logic and correctness and a code-quality seat. A security seat joins when the task touches untrusted input, secrets, network calls, file writes, what ships, public docs, dependencies, CI workflows, git hooks or settings. The agent never runs a git write. Each task ends with a summary and a PowerShell command block for the user to run. A two-round stop rule, a local gate before any seat round and a cap of 4 agents at once keep each task's review cost bounded.
 
 ## Install
 
