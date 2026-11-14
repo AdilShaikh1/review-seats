@@ -1,0 +1,13 @@
+schema_version: "1.1"
+name: security-trigger-decision
+expected_outcome: |
+  Branch feature/ci-checks holds task 5, the current task, and task 6, planned next with its package already
+  in place. The ledger gains a decision for each task, written into progress.md's existing text rather than a
+  new file that replaces it. Task 5 skips the security seat, and the ledger gives a reason, such as no security
+  trigger applying to this change. Task 5's code-quality seat runs on the mid tier, because its diff is under
+  150 lines and low risk. Task 6 runs the security seat, because adding .github/workflows/test.yml is a
+  CI-workflow trigger, and the ledger names that trigger. Task 6's code-quality and security seats run on the
+  most capable model, because a new CI workflow isn't low risk. The overseer runs on the most capable model for
+  both tasks. No seat is dispatched.
+context:
+  scaffold_script: place-files.sh
