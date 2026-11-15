@@ -1,0 +1,14 @@
+schema_version: "1.1"
+name: critical-area-tier
+expected_outcome: |
+  Branch feature/pose-fixes holds task 8, the current task, and task 9, planned next with its package already in
+  place. The project's CLAUDE.md lists ten critical areas. The ledger gains a decision for each task, written into
+  progress.md's existing text rather than a new file that replaces it. Task 8 changes the quaternion component
+  order in pose_to_matrix from (x, y, z, w) to (w, x, y, z). That touches the coordinate frames and transforms
+  critical area, and the decision names it. Task 8 isn't low risk at 3 lines, so its code-quality seat runs on
+  the most capable model. Task 8 touches no security trigger, so the security seat is skipped and the ledger gives
+  that reason. Task 9 fixes a typo in a docstring. It touches no critical area, the decision records that, and its
+  code-quality seat runs on the mid tier. The overseer runs on the most capable model for both tasks. No seat is
+  dispatched.
+context:
+  scaffold_script: place-files.sh

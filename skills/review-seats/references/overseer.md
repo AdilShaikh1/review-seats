@@ -4,7 +4,8 @@
 <task>-overseer-brief.md. Keep the one mode section that applies and delete the other two. Replace every
 <placeholder> with a path or a name, then delete this note. Save a round-2 brief as
 <task>-overseer-brief-r2.md, so it doesn't overwrite round 1. For a review with no plan, delete the task brief
-and implementer's report lines. -->
+and implementer's report lines. On the critical-areas line, write "none" when the project's CLAUDE.md lists no
+critical areas or the diff touches none of them. -->
 
 ## Who reviews
 
@@ -24,8 +25,10 @@ Read these files:
 - the implementer's report: `<implementer report path>`
 - the decided items, which are the ledger's rulings and the user's decisions: `<decided items path>`
 
-Check the logic and correctness of the change. Check that the docs match the code. Treat each decided item as
-settled.
+The critical areas this diff touches, from the project's CLAUDE.md: `<areas or none>`
+
+Check each critical area named above first. Then check the logic and correctness of the change. Check that the
+docs match the code. Treat each decided item as settled.
 
 Write the report to `<report path>`.
 
@@ -51,7 +54,9 @@ Read these files:
 git merge-base main HEAD. It adds the full text of each file that git ls-files --others --exclude-standard
 lists. The uncommitted last task is therefore included. -->
 
-Look for problems that cross tasks:
+The critical areas this diff touches, from the project's CLAUDE.md: `<areas or none>`
+
+Check each critical area named above first. Then look for problems that cross tasks:
 - contradictions between files
 - interfaces that drifted from one task to the next
 - docs that no longer match the code
