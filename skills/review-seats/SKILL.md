@@ -16,8 +16,8 @@ PRs and pays for each review round. It adds up to three review seats to each tas
 
 ## 1. What it changes and why
 
-SDD stays the engine. Call the Skill tool with "superpowers:subagent-driven-development" and follow it, except where
-this skill overrides it. This skill never copies SDD's text or edits its files.
+SDD stays the engine. The agent calls the Skill tool with "superpowers:subagent-driven-development" and follows it,
+except where this skill overrides it. This skill never copies SDD's text or edits its files.
 
 The overrides, by section:
 - **Git hand-off (2)** replaces SDD's commits, its worktree setup and its finishing step. The agent also pauses
@@ -29,8 +29,7 @@ The overrides, by section:
 - **Cost gates (7)** replace SDD's five-round fix loop with a two-round stop rule and add a local gate, an eval
   rule, an agent cap and one-line progress updates.
 
-Everything else in SDD still applies, including its ledger, task briefs, report files and model naming on every
-dispatch.
+Everything else in SDD still applies, including its ledger, task briefs, report files and per-dispatch model names.
 
 A review with no plan, such as "review this branch" or a pre-release review, skips SDD. It shows the user the
 `git status --porcelain --untracked-files=all` output as section 2 does, runs the local gate, then runs the seats
@@ -54,7 +53,8 @@ the ledger. BASE is `git rev-parse HEAD`. Each task runs in this order:
    review (section 5) runs next, and any fix it needs joins this task's change.
 5. The user gets a short summary of the change and one command block. The summary lists every documented limit
    and any skipped security seat, each with its reason. It also names each script the gate marked "side effects
-   not checked" and each audit-hook exception the user approved.
+   not checked" and each audit-hook exception the user approved. Neither the summary nor the command block
+   quotes a term from the project's term list.
 6. The user runs the block and says "done".
 7. The next task starts from that commit.
 
@@ -62,15 +62,16 @@ The command block comes once per task, once the review is clean or every remaini
 limit. Fix rounds produce no blocks. Push and `gh pr create` sit in the last task's block, so they run only after
 the whole-branch review is clean.
 
-The review package uses read-only git. It holds `git diff BASE` for tracked changes plus the full text of each new
-file that `git ls-files --others --exclude-standard` lists, written to one file in the workspace. Each round's
-package is its own file, `task-N-package-rK.md`, and no package file is overwritten. Round 2 diffs the two
-packages. SDD's `review-package` script compares two commits, so it doesn't fit an uncommitted change. A repo's
+The review package uses read-only git. It wraps each diff and each new file's text in four-backtick fences, so an
+inner three-backtick code fence doesn't end them early. It holds `git diff BASE` for tracked changes plus the full
+text of each new file that `git ls-files --others --exclude-standard` lists, written to one file in the workspace.
+Each round's package is its own file, `task-N-package-rK.md`, and no package file is overwritten. Round 2 diffs the
+two packages. SDD's `review-package` script compares two commits, so it doesn't fit an uncommitted change. A repo's
 first commit has no BASE, so its seats read the files directly.
 
 The command block is PowerShell and holds these steps in order:
 
-1. `git add` with each file named. Never `git add .`.
+1. `git add` with each file named, never `git add .`.
 2. `git diff --cached --stat`, with the expected file count stated beside it.
 3. `git commit -m '<short subject>'`. The message never mentions AI or the agent.
 4. On a branch's last task, `git push -u origin <branch>` and `gh pr create` with a body that says what changed
@@ -96,7 +97,7 @@ gh pr create --title 'Add CSV export' --body 'Adds CSV export for the report tab
 ```
 
 A new repo's first commit gets its own block with no branch and no PR. That block runs `git init -b main` (skipped
-for a cloned empty repo), the named `git add`, the `--stat` check and `git commit`. It ends with
+for a cloned empty repo), a `git add` that names each file, the `--stat` check and `git commit`. It ends with
 `gh repo create <owner>/<name> --<public|private> --source . --remote origin --push`, with the visibility the
 user chose, or `git push -u origin main` when the remote already exists. Before that commit exists, the agent
 creates the workspace folder by hand.
@@ -104,12 +105,12 @@ creates the workspace folder by hand.
 ## 3. Branches
 
 - Before a branch's first task, the agent gives the user a block with `git switch main`, `git pull` and
-  `git switch -c feature/<2-3 words>`. It waits for "done" before it records BASE. All the work then happens
+  `git switch -c <branch name>`. It waits for "done" before it records BASE. All the work then happens
   uncommitted on that local branch. After a new repo's first commit, no work happens on main.
 - One feature per branch, with about 400 changed lines at most. Generated files, fixtures and lock files don't
   count toward that size.
-- Name the branch `feature/<2-3 words>` when there is no ticket. When a ticket exists, use its key form, such as
-  `feature/ABC-124-csv-export`.
+- A branch with no ticket is named `feature/<2-3 words>`. A branch with a ticket takes its key form instead,
+  such as `feature/ABC-124-csv-export`.
 - Each branch gets one PR. The user creates and merges it, and the next branch starts from the updated main.
 - A new repo's first commit holds only its core building block. Everything else arrives in later branches.
 
@@ -150,8 +151,10 @@ applies. Each seat writes its own report into the workspace (section 8).
 
 Models for the seats:
 - The overseer always runs on the most capable model.
-- Code quality and security run on the mid tier for a diff under about 150 lines with low risk. Otherwise they
-  run on the most capable model.
+- Code quality and security run on the mid tier for a low-risk diff under about 150 lines. A diff is low risk when
+  its only security triggers are public docs or what ships, with no code, untrusted input, secrets, term lists,
+  network or subprocess calls, file writes, dependencies, CI, hooks or settings. Otherwise they run on the most
+  capable model.
 
 The final review is the overseer reading the whole branch, on the most capable model. It uses the whole-branch
 mode of [references/overseer.md](references/overseer.md), which also sets its fix cap. It replaces SDD's final
@@ -200,8 +203,8 @@ release candidate. Both run on the session's own model.
 ## 8. Where things live
 
 SDD's workspace under `<repo>/.superpowers/sdd/` holds the ledger, the briefs, the seat reports and the gate
-results. Before the first task, confirm that `.gitignore` covers `.superpowers/`, so nothing review-related ships.
-When it doesn't, add the line and name `.gitignore` in the first command block.
+results. Before the first task, the agent confirms that `.gitignore` covers `.superpowers/`, so nothing
+review-related ships. When it doesn't, it adds the line and names `.gitignore` in the first command block.
 
 ## 9. Works with
 

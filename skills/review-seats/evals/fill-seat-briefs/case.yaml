@@ -7,7 +7,7 @@ expected_outcome: |
   and the task-4 package by path, without pasting their text, and keeps only its round-1 mode with no
   placeholder left outside an HTML comment. The security brief gives INTERNAL/private_terms.txt as the
   term-list path and never quotes a term from it. Its ship-list line points to task-4-ship-list.md, and its
-  audit-log line is dropped, because cli.py needs arguments and the gate never ran it. The drafted commit
-  message for task 4 is saved as its own file in the workspace. No seat runs.
+  audit-log line reads none with that reason, because cli.py needs arguments and the gate never ran it. The
+  drafted commit message for task 4 is saved as its own file in the workspace. No seat runs.
 context:
   scaffold_script: place-files.sh

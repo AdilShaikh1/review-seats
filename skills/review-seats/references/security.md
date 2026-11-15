@@ -5,9 +5,10 @@
 <placeholder> with a path or a name, then delete this note. Save a round-2 brief as
 <task>-security-brief-r2.md, so it doesn't overwrite round 1. For a review with no plan, delete the task brief,
 implementer's report and hand-off text lines. Keep the ship list line, because the gate builds one whenever this
-seat runs. Delete the audit log line when no script changed. In round 2, delete the hand-off text, ship list or
-audit log line when that file didn't change. When the project's CLAUDE.md names no term list, write "none" in
-place of its path. -->
+seat runs. Delete the audit log line when no script changed. When a changed script needed arguments or wasn't
+Python, so it didn't run, keep the audit log line and write "none" with that reason instead of deleting it. In
+round 2, delete the hand-off text, ship list or audit log line when that file didn't change. When the project's
+CLAUDE.md names no term list, write "none" in place of its path. -->
 
 ## How to review
 
