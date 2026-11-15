@@ -127,6 +127,8 @@ These are real, billed model runs on the same model. On the four cases, the skil
 - `.claude-plugin/`: the plugin and marketplace manifests
 - `.agents/adr/`: decision records
 - `CLAUDE.md` and `AGENTS.md`: rules for agents working on this repo
+- `CHANGELOG.md`: the release notes
+- `README.md`, `LICENSE` and `.gitignore`: this page, the MIT license and the files git leaves out
 
 ## License
 
