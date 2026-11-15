@@ -13,6 +13,7 @@ The README's Repository layout section lists every folder and file this repo hol
 - When the skill's behaviour text or a fixture changes, rerun the evals in `skills/review-seats/evals/` with `claude plugin eval`, plus one final pass on the release candidate.
 - A decision that shapes the repo gets a short record in `.agents/adr/`.
 - The "up to three" seat-count wording reads the same in SKILL.md, the README and the three manifests (plugin.json, marketplace.json, openai.yaml).
+- This repo has no critical areas of its own. The critical-areas lists in the skill are examples for other projects.
 
 ## Before every commit
 

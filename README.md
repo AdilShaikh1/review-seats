@@ -70,6 +70,26 @@ On the branch's last task, the overseer's whole-branch review runs first, before
 
 All three seats share one contract for their ground rules, the verdict format and the classes of finding that block. It lives at [skills/review-seats/references/brief-contract.md](skills/review-seats/references/brief-contract.md).
 
+## Critical areas
+
+A critical area is a part of a project where a short diff can silently break correctness. A three-line change to a quaternion's component order still runs, yet every pose that passes through it comes out wrong.
+
+Code quality and security run on the mid tier for a diff under about 150 lines whose only security triggers are public docs or what ships. A diff that touches a listed critical area goes to the most capable model at any size. The overseer always runs there. Its brief names each critical area the diff touches, so the overseer checks those first. The ledger records which areas each diff touches, or that it touches none.
+
+A project lists its critical areas in its own CLAUDE.md, next to the overseer persona and the term list. Each area gets one bullet that names it, says what it covers and says what can silently break:
+
+```markdown
+## Critical areas
+
+- **Coordinate frames and transforms** (`src/geometry/`). Extrinsics, quaternion
+  component order, transform direction. An inverted transform still runs and moves
+  every point by the wrong pose.
+- **Data splits and leakage.** Train, validation and test boundaries. A scaler fitted
+  before the split inflates validation scores, and nothing fails.
+```
+
+[skills/review-seats/references/critical-areas.md](skills/review-seats/references/critical-areas.md) holds example lists for 3D perception and for machine learning and data science. Copy them and trim them to the project.
+
 ## Common questions
 
 **Why doesn't the agent commit?** The user keeps every git write. The agent writes the change, and the user runs the add, commit, push and PR steps from a command block.
@@ -90,18 +110,18 @@ All three seats share one contract for their ground rules, the verdict format an
 
 ## Tests
 
-`skills/review-seats/evals/` holds three test cases in the folder layout that `claude plugin eval` reads. One fills the three seat briefs from their templates, one decides when the security seat runs and which model tier each seat gets, and one triages findings under the stop rule. Each case has a prompt, fixture files and a set of graders. Each case's `place-files.sh` copies its fixtures into the sandbox folder `claude plugin eval` runs it in, so the run stays inside that sandbox. On Windows, run them from Git Bash or WSL, because the scaffold scripts need bash. Run them with:
+`skills/review-seats/evals/` holds four test cases in the folder layout that `claude plugin eval` reads. One fills the three seat briefs from their templates, one decides when the security seat runs and which model tier each seat gets, and one triages findings under the stop rule. The fourth checks that a short diff in a critical area goes to the most capable model. Each case has a prompt, fixture files and a set of graders. Each case's `place-files.sh` copies its fixtures into the sandbox folder `claude plugin eval` runs it in, so the run stays inside that sandbox. On Windows, run them from Git Bash or WSL, because the scaffold scripts need bash. Run them with:
 
 ```bash
 claude plugin eval skills/review-seats --scaffold --allow-tools Write,Edit,Bash
 ```
 
-These are real, billed model runs. Iteration 1 ran all three cases with and without the skill, on the same model. With the skill, 25 of 25 assertions passed; without it, 14 of 25 passed.
+These are real, billed model runs on the same model. On the four cases, the skill passes 32 of 32 assertions and the agent without it passes 17 of 32. The critical-area case alone goes from 3 of 7 without the skill to 7 of 7 with it.
 
 ## Repository layout
 
 - `skills/review-seats/SKILL.md`: the skill
-- `skills/review-seats/references/`: the seat brief templates and the contract they share
+- `skills/review-seats/references/`: the seat brief templates, the contract they share and the critical-areas examples
 - `skills/review-seats/agents/openai.yaml`: the skill's name and description for Codex
 - `skills/review-seats/evals/`: test cases
 - `.claude-plugin/`: the plugin and marketplace manifests

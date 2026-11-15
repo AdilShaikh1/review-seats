@@ -152,9 +152,17 @@ applies. Each seat writes its own report into the workspace (section 8).
 Models for the seats:
 - The overseer always runs on the most capable model.
 - Code quality and security run on the mid tier for a low-risk diff under about 150 lines. A diff is low risk when
-  its only security triggers are public docs or what ships, with no code, untrusted input, secrets, term lists,
-  network or subprocess calls, file writes, dependencies, CI, hooks or settings. Otherwise they run on the most
-  capable model.
+  its only security triggers are public docs or what ships, with no untrusted input, secrets, term lists, network
+  or subprocess calls, file writes, dependencies, CI, hooks or settings, and when it touches none of the project's
+  critical areas. Otherwise they run on the most capable model.
+- A critical area is a part of the codebase where a short diff can silently break correctness. Each project lists
+  its own in its CLAUDE.md. A diff touches an area when it changes the area's behaviour or a convention its
+  comments or docs state, so a typo fix in a comment doesn't. Deleting or skipping a test that checks a critical
+  area, or changing its tolerance, threshold, golden value or input fixture, also touches that area. Renaming or
+  reformatting a test doesn't. A diff that
+  touches one isn't low risk at any size, and the overseer's brief names each area it touches. The ledger records
+  those areas, or that the diff touches none. [references/critical-areas.md](references/critical-areas.md) gives
+  the format and two example lists.
 
 The final review is the overseer reading the whole branch, on the most capable model. It uses the whole-branch
 mode of [references/overseer.md](references/overseer.md), which also sets its fix cap. It replaces SDD's final

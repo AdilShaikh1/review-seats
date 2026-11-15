@@ -2,7 +2,8 @@ schema_version: "1.1"
 name: fill-seat-briefs
 expected_outcome: |
   The workspace holds a filled-in round-1 brief for each of the three seats. The overseer's brief names the
-  "Head of Data Quality" persona. The code-quality brief calls the ponytail-review and ponytail skills by name.
+  "Head of Data Quality" persona, and its critical-areas line reads none, because the project's CLAUDE.md lists
+  no critical areas. The code-quality brief calls the ponytail-review and ponytail skills by name.
   The security brief covers the task, because it writes a file and changes a doc. Each brief names the contract
   and the task-4 package by path, without pasting their text, and keeps only its round-1 mode with no
   placeholder left outside an HTML comment. The security brief gives INTERNAL/private_terms.txt as the
