@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.0 (2026-11-24)
+
+- The skill gives a release its own block after the merge. The block tags the merge commit by its full hash, writes
+  the release notes with one line per paragraph and sets the repo's About box.
+- A fifth eval case checks the release block. On the five cases, 40 of 40 assertions pass with the skill and 24 of
+  40 without it.
+
 ## 0.1.0 (2026-11-15)
 
 - The first release holds the review-seats skill for `superpowers:subagent-driven-development`, with up to three

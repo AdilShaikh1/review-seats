@@ -1,6 +1,6 @@
 {
   "name": "review-seats",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Up to three review seats and cost gates that run alongside subagent-driven-development.",
   "author": {
     "name": "Adil Shaikh",
