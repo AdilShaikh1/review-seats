@@ -107,21 +107,22 @@ A project lists its critical areas in its own CLAUDE.md, next to the overseer pe
 - A task gets at most two seat rounds. After that, a leak, a regression or a broken doc promise is fixed on its own,
   and only the seat that raised it checks the fix.
 - The agent stops and asks before the first seat round when ponytail or ponytail-review isn't installed.
+- A release's notes show no mid-sentence breaks on the release page, and the repo's About box is set.
 
 ## Tests
 
-`skills/review-seats/evals/` holds four test cases in the folder layout that `claude plugin eval` reads. One fills the three seat briefs from their templates, one decides when the security seat runs and which model tier each seat gets, and one triages findings under the stop rule. The fourth checks that a short diff in a critical area goes to the most capable model. Each case has a prompt, fixture files and a set of graders. Each case's `place-files.sh` copies its fixtures into the sandbox folder `claude plugin eval` runs it in, so the run stays inside that sandbox. On Windows, run them from Git Bash or WSL, because the scaffold scripts need bash. Run them with:
+`skills/review-seats/evals/` holds five test cases in the folder layout that `claude plugin eval` reads. One fills the three seat briefs from their templates, one decides when the security seat runs and which model tier each seat gets, and one triages findings under the stop rule. The fourth checks that a short diff in a critical area goes to the most capable model. The fifth checks that a release block tags the merge commit by its full hash, ships one-line release notes and sets the About box. Each case has a prompt, fixture files and a set of graders. Each case's `place-files.sh` copies its fixtures into the sandbox folder `claude plugin eval` runs it in, so the run stays inside that sandbox. On Windows, run them from Git Bash or WSL, because the scaffold scripts need bash. Run them with:
 
 ```bash
 claude plugin eval skills/review-seats --scaffold --allow-tools Write,Edit,Bash
 ```
 
-These are real, billed model runs on the same model. On the four cases, the skill passes 32 of 32 assertions and the agent without it passes 17 of 32. The critical-area case alone goes from 3 of 7 without the skill to 7 of 7 with it.
+These are real, billed model runs on the same model. On the five cases, the skill passes 40 of 40 assertions and the agent without it passes 24 of 40. The critical-area case alone goes from 3 of 7 without the skill to 7 of 7 with it. The release-block case goes from 7 of 8 to 8 of 8, because the agent without the skill writes a bash block that Windows PowerShell 5.1 can't run.
 
 ## Repository layout
 
 - `skills/review-seats/SKILL.md`: the skill
-- `skills/review-seats/references/`: the seat brief templates, the contract they share and the critical-areas examples
+- `skills/review-seats/references/`: the seat brief templates, the contract they share, the critical-areas examples and the release block
 - `skills/review-seats/agents/openai.yaml`: the skill's name and description for Codex
 - `skills/review-seats/evals/`: test cases
 - `.claude-plugin/`: the plugin and marketplace manifests

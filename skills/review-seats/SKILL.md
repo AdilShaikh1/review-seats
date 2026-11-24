@@ -77,9 +77,9 @@ The command block is PowerShell and holds these steps in order:
 4. On a branch's last task, `git push -u origin <branch>` and `gh pr create` with a body that says what changed
    and how it was verified.
 
-Commit and PR text goes in single-quoted PowerShell strings. That text never contains a quote mark of either kind, a
-backslash, `$` or a backtick, because Windows PowerShell 5.1 splits a native command's argument at an inner double
-quote.
+Commit and PR text goes in single-quoted PowerShell strings. That text never contains a double quote, `$`, a backtick
+or a backslash, because Windows PowerShell 5.1 splits a native command's argument at an inner double quote. An
+apostrophe is allowed and is written as two single quotes inside the string, for example `'Fix the parser''s offset'`.
 
 A task's block on the branch `feature/csv-export` looks like this:
 
@@ -101,6 +101,10 @@ for a cloned empty repo), a `git add` that names each file, the `--stat` check a
 `gh repo create <owner>/<name> --<public|private> --source . --remote origin --push`, with the visibility the
 user chose, or `git push -u origin main` when the remote already exists. Before that commit exists, the agent
 creates the workspace folder by hand.
+
+When a branch's work ends in a release, the release gets its own block after the merge, built as
+`references/release-block.md` describes. That reference puts the tag on the merge commit's full hash, writes the
+release notes with one line per paragraph and sets the repo's About box.
 
 ## 3. Branches
 
